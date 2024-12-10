@@ -1,5 +1,11 @@
 # svelte-json-tree
 
+## 2.2.1
+
+### Patch Changes
+
+- 1b329f2: fix: update peer dependencies to support Svelte 5
+
 ## 2.2.0
 
 ### Minor Changes
