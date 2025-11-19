@@ -211,6 +211,75 @@ You can set `shouldShowPreview` to `false` to hide it.
   },
 }} shouldShowPreview={false} />
 
+### Content Editable
+
+You can make the tree `contenteditable` but readonly as well, so you can use it like a readonly textarea.
+
+```svelte
+<script>
+  let value = {
+    message: 'hello world',
+    item: [1, 2, 3],
+    nested: {
+      key: 'value',
+    },
+  };
+</script>
+
+<JsonTree {value} contenteditable />
+```
+
+<JsonTree value={{
+  message: 'hello world',
+  item: [1, 2, 3],
+  nested: {
+    key: 'value',
+  },
+}} contenteditable />
+
+### Don't click labels
+
+You can set the labels of the tree to not listen to clicks. This is useful when paired with `contenteditable` so you can click around and not accidentally collapse areas.
+
+```svelte
+<script>
+  let value={{
+    message: 'hello world',
+    item: [1, 2, 3],
+    symbol: Symbol(1),
+    n: null,
+    u: undefined,
+    fn: function (a, b) {},
+    map: new Map([
+      [1, 2],
+      ['3', false],
+    ]),
+    set: new Set([true, false, Infinity]),
+    regex: /^https?:\/\/$/g,
+    error: new Error('oops'),
+    date: new Date(),
+  }};
+</script>
+
+<JsonTree {value} contenteditable labelsCanBeClicked={false} />
+```
+
+<JsonTree value={{
+  message: 'hello world',
+  item: [1, 2, 3],
+  symbol: Symbol(1),
+  n: null,
+  u: undefined,
+  fn: function (a, b) {},
+  map: new Map([
+    [1, 2],
+    ['3', false],
+  ]),
+  set: new Set([true, false, Infinity]),
+  regex: /^https?:\/\/$/g,
+  error: new Error('oops'),
+  date: new Date(),
+}} contenteditable labelsCanBeClicked={false} />
 
 ## ESM / Standalone / UMD
 

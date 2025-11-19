@@ -4,15 +4,30 @@
   import { readable, writable } from 'svelte/store';
   import Expandable from './Expandable.svelte';
   import { getShouldExpandNode } from './utils/expand';
+  import { setContext } from 'svelte';
 
   export let value: unknown;
   export let shouldShowPreview: boolean = true;
   export let shouldTreatIterableAsObject: boolean = false;
   export let defaultExpandedPaths: string[] = [];
   export let defaultExpandedLevel: number = 0;
+  export let labelsCanBeClicked: boolean = true;
+  export let contenteditable: boolean = false;
 
-  $: expandable = value && typeof value === 'object'
+  setContext('json_tree', { labelsCanBeClicked, contenteditable });
+
+  $: expandable = value && typeof value === 'object';
   $: shouldExpandNode = getShouldExpandNode({ defaultExpandedPaths, defaultExpandedLevel });
+
+  function ignore(e) {
+    e.preventDefault();
+    return false;
+  }
+  function ignoreKeys(...keys) {
+    return (e) => {
+      if (keys.includes(e.key)) e.preventDefault();
+    };
+  }
 
   const expanded = writable(true);
   useState({
@@ -27,7 +42,15 @@
   });
 </script>
 
-<span class:expandable>
+<span
+  class:expandable
+  contenteditable={contenteditable ? 'true' : 'false'}
+  on:cut={ignore}
+  on:paste={ignore}
+  on:input={ignore}
+  on:keydown={ignoreKeys('Backspace', 'Delete')}
+  on:keypress={ignore}
+>
   {#if expandable}
     <Expandable key="$" {expanded}>
       <JSONNode {value} />

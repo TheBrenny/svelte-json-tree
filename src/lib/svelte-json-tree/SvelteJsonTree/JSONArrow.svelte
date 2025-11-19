@@ -1,14 +1,18 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
   import { useState } from './utils/context';
 
   const { expanded: _expanded, expandable } = useState();
   export let expanded = _expanded;
+  let ctx: { labelsCanBeClicked: boolean; contenteditable: boolean } = getContext('json_tree');
 </script>
 
 {#if $expandable}
   <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
   <span
     class="container"
+    contenteditable="false"
+	style:--padding-right={ctx.labelsCanBeClicked ? "100%" : "0%"}
     on:click={(event) => {
       event.stopPropagation();
       $expanded = !$expanded;
@@ -20,11 +24,12 @@
 
 <style>
   .container {
+	--padding-right: 100%;
     display: inline-block;
     transform: translate(calc(0px - var(--li-identation)), -50%);
     position: absolute;
     top: 50%;
-    padding-right: 100%;
+    padding-right: var(--padding-right);
   }
   .arrow {
     transform-origin: 25% 50%;

@@ -1,6 +1,6 @@
 <script lang="ts">
   /* eslint-disable @typescript-eslint/no-empty-function */
-  import { onMount } from 'svelte';
+  import { getContext, onMount } from 'svelte';
   import JSONArrow from './JSONArrow.svelte';
   import { useState } from './utils/context';
   import { writable } from 'svelte/store';
@@ -17,6 +17,8 @@
     { expandable: true }
   );
   $expandable = true;
+
+  const ctx: { labelsCanBeClicked: boolean; contenteditable: boolean } = getContext('json_tree');
 
   if (displayMode !== 'summary') {
     // if not internally control to open
@@ -35,7 +37,12 @@
     });
   }
   function toggleExpand() {
+    if (!ctx.labelsCanBeClicked) return;
     $expanded = !$expanded;
+  }
+  function toggleExpandLabel(index) {
+    if (!ctx.labelsCanBeClicked) return;
+    child_expanded[index].update((value) => !value);
   }
 
   $: child_expanded = keys.map(() => writable(false));
@@ -62,8 +69,10 @@
         <li class:indent={$expanded} on:click|stopPropagation={() => {}}>
           <Expandable key={expandKey(key)} expanded={child_expanded[index]}>
             <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span class="label" on:click={() => child_expanded[index].update((value) => !value)}>
-              <JSONArrow /><slot name="item_key" {key} {index} />{#if !shouldShowColon || shouldShowColon(key)}<span class="operator">{': '}</span>{/if}
+            <span class="label" on:click={() => toggleExpandLabel(index)}>
+              <JSONArrow /><slot name="item_key" {key} {index} />{#if !shouldShowColon || shouldShowColon(key)}<span class="operator"
+                  >{': '}</span
+                >{/if}
             </span><slot name="item_value" {key} {index} />
           </Expandable>
         </li>
